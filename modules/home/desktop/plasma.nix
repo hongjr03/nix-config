@@ -20,7 +20,8 @@
       # Compx 8k is the pointer whose wheel should be inverted.
       "kcminputrc"."Libinput/14139/4569/Compx Wireless mouse 8k dongle-L".NaturalScroll = true;
       "kcminputrc"."Libinput/1133/50504/Logitech USB Receiver Mouse".NaturalScroll = false;
-      "kcminputrc"."Libinput/14139/4569/Compx Wireless mouse 8k dongle-L Consumer Control".NaturalScroll = false;
+      "kcminputrc"."Libinput/14139/4569/Compx Wireless mouse 8k dongle-L Consumer Control".NaturalScroll =
+        false;
       "kcminputrc"."Libinput/14139/4569/Compx Wireless mouse 8k dongle-L Mouse".NaturalScroll = false;
       "kcminputrc"."Libinput/1133/50504/Logitech USB Receiver Mouse".ScrollMethod = 0;
 

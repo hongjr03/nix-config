@@ -2,7 +2,12 @@
 # Hardware, site policy, and which profiles/modules it pulls in.
 # Shared opinions live in modules/; they are not copied here.
 
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [

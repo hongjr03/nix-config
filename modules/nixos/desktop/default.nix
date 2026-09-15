@@ -130,8 +130,6 @@
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
-    polkitPolicyOwners = lib.attrNames (
-      lib.filterAttrs (_: u: u.isNormalUser) config.users.users
-    );
+    polkitPolicyOwners = lib.attrNames (lib.filterAttrs (_: u: u.isNormalUser) config.users.users);
   };
 }
