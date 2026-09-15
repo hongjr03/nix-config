@@ -1,0 +1,10 @@
+keys:
+  - &host age1kchg804zfhsftnhmvaqeh3w8wra3hl448ytyc0f98v8je3ua7s4q73ahj9
+  - &userssh ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPp0EXEF02hTvLGQWYLMrXJVAKkBn6VcLlQ2yeEKZn25
+
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|yml|json|env)$
+    key_groups:
+      - age:
+          - *host
+          - *userssh

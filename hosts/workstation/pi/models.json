@@ -1,0 +1,14 @@
+{
+  "providers": {
+    "openrouter": {
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "apiKey": "$OPENROUTER_API_KEY",
+      "models": [
+        { "id": "anthropic/claude-sonnet-4" },
+        { "id": "openai/gpt-4.1" },
+        { "id": "google/gemini-2.5-pro" }
+      ]
+    }
+  }
+}

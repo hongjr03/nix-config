@@ -2,13 +2,16 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    ./hardware-configuration.nix
+    inputs.home-manager.nixosModules.home-manager
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  nixpkgs.config.allowUnfree = true;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -168,7 +171,39 @@
     xpra
     xterm
     rustdesk-flutter
+    sops
+    age
   ];
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "backup";
+    extraSpecialArgs = { inherit inputs; };
+    users.jiarong = import ./home.nix;
+  };
+
+  sops = {
+    defaultSopsFile = ../../secrets/secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets = {
+      anthropic_api_key = { owner = "jiarong"; };
+      openai_api_key = { owner = "jiarong"; };
+      gemini_api_key = { owner = "jiarong"; };
+      openrouter_api_key = { owner = "jiarong"; };
+    };
+    templates."pi.env" = {
+      path = "/run/secrets/pi.env";
+      owner = "jiarong";
+      mode = "0400";
+      content = ''
+        ANTHROPIC_API_KEY=${config.sops.placeholder.anthropic_api_key}
+        OPENAI_API_KEY=${config.sops.placeholder.openai_api_key}
+        GEMINI_API_KEY=${config.sops.placeholder.gemini_api_key}
+        OPENROUTER_API_KEY=${config.sops.placeholder.openrouter_api_key}
+      '';
+    };
+  };
 
   # Start RustDesk with the graphical session so this machine can be controlled.
   environment.etc."xdg/autostart/rustdesk.desktop".source =
