@@ -161,17 +161,6 @@
     tunMode = true;
   };
 
-  # Self-hosted ID + relay so LAN clients do not depend on rs.rustdesk.com.
-  services.rustdesk-server = {
-    enable = true;
-    openFirewall = true;
-    # Advertise LAN IP, not the hostname (mihomo fake-ip breaks relay).
-    signal = {
-      relayHosts = [ "114.212.81.57" ];
-      extraArgs = [ "--mask" "114.212.80.0/21" ];
-    };
-  };
-
   networking.firewall.allowedTCPPorts = [ 22 7890 9090 21116 ];
   networking.firewall.allowedUDPPorts = [ 21116 ];
   networking.firewall.checkReversePath = "loose";

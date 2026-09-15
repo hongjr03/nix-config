@@ -50,7 +50,7 @@
   };
 
   # Plasma 6 on Wayland. SDDM is the native login manager; mixing GDM + Plasma
-  # is unsupported. Autologin keeps RustDesk / KRDP available on this lab box
+  # is unsupported. Autologin keeps KRDP available on this lab box
   # after the display manager restarts (sleep is already disabled).
   services.desktopManager.plasma6.enable = true;
   services.displayManager.sddm.enable = true;
@@ -94,8 +94,7 @@
   };
 
   # KRDP (Plasma Remote Desktop) ships with plasma6 and listens on 3389 once
-  # enabled in System Settings → Remote Desktop. RustDesk remains the
-  # unattended fallback via xdg autostart.
+  # enabled in System Settings → Remote Desktop.
   networking.firewall.allowedTCPPorts = [ 3389 ];
 
   # Install firefox. ExtensionSettings installs add-ons on first launch
@@ -151,11 +150,6 @@
   environment.systemPackages = with pkgs; [
     xpra
     xterm
-    rustdesk-flutter
     ghostty
   ];
-
-  # Start RustDesk with the graphical session so this machine can be controlled.
-  environment.etc."xdg/autostart/rustdesk.desktop".source =
-    "${pkgs.rustdesk-flutter}/share/applications/rustdesk.desktop";
 }
