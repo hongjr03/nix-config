@@ -14,6 +14,13 @@
     enableBashIntegration = true;
   };
 
+  # `--cmd cd` makes `cd` / `cdi` the zoxide aliases instead of `z` / `zi`.
+  programs.zoxide = {
+    enable = true;
+    enableBashIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
   programs.git = {
     enable = true;
     settings.user = {
