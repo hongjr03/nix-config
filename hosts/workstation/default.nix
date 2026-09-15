@@ -6,7 +6,7 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
+    ./hardware.nix
     inputs.self.nixosModules.core
     inputs.self.nixosModules.users-jiarong
     inputs.self.nixosModules.desktop
@@ -81,10 +81,16 @@
     ];
   };
 
-  # Subscription lives in the config file, not in the Nix store.
+  # Subscription URL and dashboard secret stay in sops. The NixOS module
+  # LoadCredentials the decrypted file so it never lands in the nix store.
+  sops.secrets.mihomo-config = {
+    format = "binary";
+    sopsFile = ../../secrets/mihomo.yaml;
+    restartUnits = [ "mihomo.service" ];
+  };
   services.mihomo = {
     enable = true;
-    configFile = "/home/jiarong/.config/mihomo/config.yaml";
+    configFile = config.sops.secrets.mihomo-config.path;
     webui = pkgs.zashboard;
     tunMode = true;
   };
