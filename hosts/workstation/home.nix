@@ -24,4 +24,10 @@
   home.file.".pi/agent/settings.json".text = builtins.toJSON {
     defaultProvider = "openrouter";
   };
+
+  # Enable 白霜拼音 as the Rime default (rime-frost ships this as a suggestion file).
+  home.file.".local/share/fcitx5/rime/default.custom.yaml".text = ''
+    patch:
+      __include: rime_frost_suggestion:/
+  '';
 }

@@ -13,6 +13,11 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.overlays = [
+    (final: prev: {
+      rime-frost = final.callPackage ../../pkgs/rime-frost.nix { };
+    })
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -36,15 +41,38 @@
   i18n.inputMethod = {
     type = "fcitx5";
     enable = true;
-    fcitx5.addons = with pkgs; [
-      # These are frontend modules for different toolkits (GTK/Qt)
-      # They are usually necessary for the IME to work in various apps.
-      fcitx5-gtk
-      qt6Packages.fcitx5-chinese-addons # If you use Qt apps (KDE, etc.)
-      
-      # A basic color theme (optional, but nice)
-      fcitx5-nord
-    ];
+    fcitx5 = {
+      # Plasma/KWin owns text-input; do not set GTK_IM_MODULE/QT_IM_MODULE.
+      waylandFrontend = true;
+      addons = with pkgs; [
+        fcitx5-gtk
+        fcitx5-mellow-themes
+        # 白霜拼音. default.custom.yaml in home.nix enables rime_frost_suggestion.
+        (fcitx5-rime.override {
+          rimeDataPkgs = [ rime-frost ];
+        })
+      ];
+      settings = {
+        # Grok uses Ctrl+Space for voice recording; don't steal it.
+        globalOptions."Hotkey/TriggerKeys"."0" = "Control+Shift+space";
+        inputMethod = {
+          "Groups/0" = {
+            Name = "默认";
+            "Default Layout" = "us";
+            DefaultIM = "rime";
+          };
+          "Groups/0/Items/0".Name = "keyboard-us";
+          "Groups/0/Items/1".Name = "rime";
+          GroupOrder."0" = "默认";
+        };
+        addons.classicui.globalSection = {
+          Theme = "kwinblur-mellow-youlan";
+          DarkTheme = "kwinblur-mellow-youlan-dark";
+          UseDarkTheme = "True";
+          "Vertical Candidate List" = "False";
+        };
+      };
+    };
   };
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "zh_CN.UTF-8";
@@ -72,6 +100,18 @@
   ];
   programs.kde-pim.enable = false;
   services.orca.enable = false;
+
+  # KWin must spawn fcitx5 as the virtual keyboard so it gets the
+  # zwp_input_method socket. XDG autostart would start a second instance
+  # without that socket.
+  environment.etc."xdg/kwinrc".text = ''
+    [Wayland]
+    InputMethod=${config.i18n.inputMethod.package}/share/applications/fcitx5-wayland-launcher.desktop
+  '';
+  environment.etc."xdg/autostart/org.fcitx.Fcitx5.desktop".text = ''
+    [Desktop Entry]
+    Hidden=true
+  '';
 
   # Configure keymap in X11
   services.xserver.xkb = {
