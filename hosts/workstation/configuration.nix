@@ -96,6 +96,7 @@
     user = "jiarong";
   };
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konsole # Ghostty is the terminal
     elisa
   ];
   programs.kde-pim.enable = false;
@@ -215,6 +216,16 @@
     "x-scheme-handler/unknown" = "firefox.desktop";
   };
   environment.sessionVariables.BROWSER = "firefox";
+  environment.sessionVariables.TERMINAL = "ghostty";
+
+  # Plasma "Open in Terminal" and xdg-open of terminal apps.
+  xdg.terminal-exec = {
+    enable = true;
+    settings = {
+      KDE = [ "com.mitchellh.ghostty.desktop" ];
+      default = [ "com.mitchellh.ghostty.desktop" ];
+    };
+  };
 
   # 1Password GUI + CLI. The dedicated NixOS modules install setuid/setgid
   # wrappers and PolKit rules so CLI integration, system authentication,
@@ -262,6 +273,7 @@
     rustdesk-flutter
     sops
     age
+    ghostty
   ];
 
   home-manager = {

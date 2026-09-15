@@ -30,4 +30,14 @@
     patch:
       __include: rime_frost_suggestion:/
   '';
+
+  programs.ghostty = {
+    enable = true;
+    enableBashIntegration = true;
+    settings = {
+      # Let TUI apps (Grok) read/write the clipboard via OSC 52 without a prompt.
+      clipboard-read = "allow";
+      clipboard-write = "allow";
+    };
+  };
 }
