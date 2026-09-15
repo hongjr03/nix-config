@@ -58,9 +58,20 @@
     LC_TIME = "zh_CN.UTF-8";
   };
 
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
+  # Plasma 6 on Wayland. SDDM is the native login manager; mixing GDM + Plasma
+  # is unsupported. Autologin keeps RustDesk / KRDP available on this lab box
+  # after the display manager restarts (sleep is already disabled).
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "jiarong";
+  };
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    elisa
+  ];
+  programs.kde-pim.enable = false;
+  services.orca.enable = false;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -99,11 +110,9 @@
   };
 
   
-  services.gnome.gnome-remote-desktop.enable = true;
-
-  systemd.services.gnome-remote-desktop = {
-    wantedBy = [ "graphical.target" ];
-  };
+  # KRDP (Plasma Remote Desktop) ships with plasma6 and listens on 3389 once
+  # enabled in System Settings → Remote Desktop. RustDesk remains the
+  # unattended fallback via xdg autostart.
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
