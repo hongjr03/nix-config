@@ -1,4 +1,5 @@
-# Home-manager bits that only make sense with a graphical session.
+# jiarong's graphical environment. Imported by hosts that have a seat,
+# not by the user module — a headless box should not grow Ghostty/Zed/Rime.
 
 { pkgs, ... }:
 

@@ -1,17 +1,15 @@
-# Graphical session for this host: Plasma, IME, audio, and GUI apps.
-# Import this from configuration.nix; drop it to leave the box headless.
-
-{ config, pkgs, ... }:
+# Graphical workstation profile: Plasma 6, fcitx5, PipeWire, and GUI apps.
+# Import this from a host that has a seat. Lab policy (autologin, KRDP port,
+# sleep) stays on the host — that is "this box", not "a desktop".
 
 {
-  home-manager.users.jiarong.imports = [ ./home-desktop.nix ];
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
-  nixpkgs.overlays = [
-    (final: prev: {
-      rime-frost = final.callPackage ../../pkgs/rime-frost.nix { };
-    })
-  ];
-
+{
   i18n.inputMethod = {
     type = "fcitx5";
     enable = true;
@@ -21,7 +19,7 @@
       addons = with pkgs; [
         fcitx5-gtk
         fcitx5-mellow-themes
-        # 白霜拼音. default.custom.yaml in home-desktop.nix enables rime_frost_suggestion.
+        # 白霜拼音. modules/home/desktop enables rime_frost_suggestion.
         (fcitx5-rime.override {
           rimeDataPkgs = [ rime-frost ];
         })
@@ -50,14 +48,9 @@
   };
 
   # Plasma 6 on Wayland. SDDM is the native login manager; mixing GDM + Plasma
-  # is unsupported. Autologin keeps KRDP available on this lab box
-  # after the display manager restarts (sleep is already disabled).
+  # is unsupported.
   services.desktopManager.plasma6.enable = true;
   services.displayManager.sddm.enable = true;
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "jiarong";
-  };
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     konsole # Ghostty is the terminal
     elisa
@@ -93,13 +86,8 @@
     pulse.enable = true;
   };
 
-  # KRDP (Plasma Remote Desktop) ships with plasma6 and listens on 3389 once
-  # enabled in System Settings → Remote Desktop.
-  networking.firewall.allowedTCPPorts = [ 3389 ];
-
-  # Install firefox. ExtensionSettings installs add-ons on first launch
-  # from addons.mozilla.org (not the nix store). force_installed keeps
-  # them pinned by policy; other store add-ons remain allowed.
+  # ExtensionSettings installs add-ons on first launch from addons.mozilla.org
+  # (not the nix store). force_installed keeps them pinned by policy.
   programs.firefox = {
     enable = true;
     policies.ExtensionSettings =
@@ -138,18 +126,12 @@
     };
   };
 
-  # 1Password GUI + CLI. The dedicated NixOS modules install setuid/setgid
-  # wrappers and PolKit rules so CLI integration, system authentication,
-  # and browser-extension unlock work (plain systemPackages is not enough).
+  # Dedicated NixOS modules install setuid/setgid wrappers and PolKit rules.
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
-    polkitPolicyOwners = [ "jiarong" ];
+    polkitPolicyOwners = lib.attrNames (
+      lib.filterAttrs (_: u: u.isNormalUser) config.users.users
+    );
   };
-
-  environment.systemPackages = with pkgs; [
-    xpra
-    xterm
-    ghostty
-  ];
 }
