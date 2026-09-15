@@ -40,4 +40,11 @@
       clipboard-write = "allow";
     };
   };
+
+  # settings.json stays mutable so the GUI can save preferences.
+  programs.zed-editor = {
+    enable = true;
+    extraPackages = [ pkgs.nixd ];
+    extensions = [ "nix" ];
+  };
 }
