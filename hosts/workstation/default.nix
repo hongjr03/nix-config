@@ -6,7 +6,7 @@
 
 {
   imports = [
-    ./hardware.nix
+    ./hardware-configuration.nix
     inputs.self.nixosModules.core
     inputs.self.nixosModules.users-jiarong
     inputs.self.nixosModules.desktop
