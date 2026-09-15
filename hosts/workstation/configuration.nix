@@ -183,8 +183,38 @@
     }
   ];
 
-  # Install firefox.
-  programs.firefox.enable = true;
+  # Install firefox. ExtensionSettings installs add-ons on first launch
+  # from addons.mozilla.org (not the nix store). force_installed keeps
+  # them pinned by policy; other store add-ons remain allowed.
+  programs.firefox = {
+    enable = true;
+    policies.ExtensionSettings =
+      let
+        amo = slug: "https://addons.mozilla.org/firefox/downloads/latest/${slug}/latest.xpi";
+      in
+      {
+        "{d634138d-c276-4fc8-924b-40a0ea21d284}" = {
+          install_url = amo "1password-x-password-manager";
+          installation_mode = "force_installed";
+          default_area = "navbar";
+        };
+        "uBlock0@raymondhill.net" = {
+          install_url = amo "ublock-origin";
+          installation_mode = "force_installed";
+        };
+      };
+  };
+
+  # Firefox as the XDG default browser.
+  xdg.mime.defaultApplications = {
+    "text/html" = "firefox.desktop";
+    "application/xhtml+xml" = "firefox.desktop";
+    "x-scheme-handler/http" = "firefox.desktop";
+    "x-scheme-handler/https" = "firefox.desktop";
+    "x-scheme-handler/about" = "firefox.desktop";
+    "x-scheme-handler/unknown" = "firefox.desktop";
+  };
+  environment.sessionVariables.BROWSER = "firefox";
 
   # Interactive bash (including SSH login) reads /etc/bashrc, not ~/.bashrc.
   programs.fzf = {
