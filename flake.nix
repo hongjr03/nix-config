@@ -19,8 +19,9 @@
   };
 
   inputs = {
-    # Pinned to the nixpkgs revision this machine is already running.
-    nixpkgs.url = "github:NixOS/nixpkgs/93108a538f07";
+    # Track the 26.05 stable channel so `nix flake update nixpkgs` actually moves.
+    # Keep this in lockstep with home-manager/release-26.05 below.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
