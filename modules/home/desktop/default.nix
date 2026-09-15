@@ -12,11 +12,14 @@
       __include: rime_frost_suggestion:/
   '';
 
+  home.packages = [ pkgs.wl-clipboard ];
+
   programs.ghostty = {
     enable = true;
     enableBashIntegration = true;
     settings = {
-      # Let TUI apps (Grok) read/write the clipboard via OSC 52 without a prompt.
+      # OSC 52: Grok (and other TUIs) copy/paste the system clipboard
+      # without a prompt. Klipper is told to hold the result in plasma.nix.
       clipboard-read = "allow";
       clipboard-write = "allow";
     };

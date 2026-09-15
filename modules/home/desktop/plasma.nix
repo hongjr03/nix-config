@@ -1,8 +1,7 @@
 # Declarative Plasma. High-level options first; configFile for things
 # rc2nix captured that have no module yet (per-device libinput).
 #
-# overrideConfig is off on purpose: rc2nix does not capture panels, and
-# kwin tiling IDs are per-output. Turning it on would reset the panel.
+# overrideConfig stays off: kwin tiling IDs are per-output.
 
 { inputs, ... }:
 
@@ -15,6 +14,37 @@
     input.keyboard.layouts = [ { layout = "us"; } ];
 
     kwin.virtualDesktops.number = 1;
+
+    # Matches ~/.config/plasma-org.kde.plasma.desktop-appletsrc (bottom panel).
+    panels = [
+      {
+        location = "bottom";
+        widgets = [
+          "org.kde.plasma.kickoff"
+          "org.kde.plasma.pager"
+          "org.kde.plasma.icontasks"
+          "org.kde.plasma.marginsseparator"
+          {
+            systemTray.items.extra = [
+              "org.kde.plasma.clipboard"
+              "org.kde.plasma.manage-inputmethod"
+              "org.kde.plasma.keyboardlayout"
+              "org.kde.plasma.keyboardindicator"
+              "org.kde.plasma.notifications"
+              "org.kde.plasma.volume"
+              "org.kde.plasma.networkmanagement"
+              "org.kde.plasma.brightness"
+              "org.kde.plasma.battery"
+              "org.kde.plasma.printmanager"
+              "org.kde.kscreen"
+              "org.kde.plasma.weather"
+            ];
+          }
+          "org.kde.plasma.digitalclock"
+          "org.kde.plasma.showdesktop"
+        ];
+      }
+    ];
 
     configFile = {
       # Compx 8k is the pointer whose wheel should be inverted.
@@ -31,6 +61,11 @@
       "kwalletrc"."org.freedesktop.secrets".apiEnabled = true;
 
       "plasma-localerc".Formats.LANG = "zh_CN.UTF-8";
+
+      # Wayland clipboard is owned by the offering app. OSC 52 copies from
+      # Ghostty/Grok vanish when focus changes unless Klipper holds them.
+      klipperrc.General.PreventEmptyClipboard = true;
+      klipperrc.General.IgnoreSelection = true;
     };
   };
 }
