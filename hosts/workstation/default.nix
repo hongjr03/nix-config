@@ -2,7 +2,7 @@
 # Hardware, site policy, and which profiles/modules it pulls in.
 # Shared opinions live in modules/; they are not copied here.
 
-{ pkgs, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -54,9 +54,25 @@
     seedClientIPs = [ "114.212.81.36" ];
   };
 
+  # Bearer token lives in sops; the script only reads it at runtime so it
+  # never enters the nix store (environment.etc is world-readable).
+  sops.secrets.pascal_ddns_token = {
+    owner = "jiarong";
+    mode = "0400";
+  };
   environment.etc."pascal-ddns.sh" = {
-    source = ./pascal-ddns.sh;
     mode = "0755";
+    source = pkgs.writeShellScript "pascal-ddns.sh" ''
+      set -eu
+      export PATH=/run/current-system/sw/bin:/run/wrappers/bin
+      token=$(tr -d '\n' < ${config.sops.secrets.pascal_ddns_token.path})
+      [ -n "$token" ]
+      sleep "$(od -An -N2 -tu2 /dev/urandom | awk -v max=291 '{ gsub(/[[:space:]]/, "", $0); print $0 - max * int($0 / max) }')"
+      ip a | curl -fsS -X POST http://pascal08.svr.pascal-lab.net:8788/api/v1/report \
+        -H "Authorization: Bearer $token" \
+        -H 'Content-Type: text/plain; charset=utf-8' \
+        --data-binary @- >/dev/null
+    '';
   };
   services.cron = {
     enable = true;
