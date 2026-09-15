@@ -216,6 +216,15 @@
   };
   environment.sessionVariables.BROWSER = "firefox";
 
+  # 1Password GUI + CLI. The dedicated NixOS modules install setuid/setgid
+  # wrappers and PolKit rules so CLI integration, system authentication,
+  # and browser-extension unlock work (plain systemPackages is not enough).
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = [ "jiarong" ];
+  };
+
   # Interactive bash (including SSH login) reads /etc/bashrc, not ~/.bashrc.
   programs.fzf = {
     keybindings = true;
