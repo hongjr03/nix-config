@@ -29,10 +29,23 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+    comin = {
+      url = "github:nlewo/comin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     inputs@{ self, nixpkgs, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
     {
       overlays.default = import ./overlays;
 
@@ -48,13 +61,26 @@
         desktop = ./modules/home/desktop;
       };
 
-      packages.x86_64-linux.rime-frost =
-        nixpkgs.legacyPackages.x86_64-linux.callPackage ./pkgs/rime-frost.nix { };
+      packages.${system}.rime-frost = pkgs.callPackage ./pkgs/rime-frost.nix { };
+
+      # Official Nix formatter. `nix fmt` reformats the tree; `nix fmt -- --ci` checks.
+      formatter.${system} = pkgs.nixfmt-tree;
+
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [
+          pkgs.nixfmt-tree
+          pkgs.sops
+          pkgs.nh
+        ];
+      };
 
       nixosConfigurations.workstation = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        inherit system;
         specialArgs = { inherit inputs; };
-        modules = [ ./hosts/workstation ];
+        modules = [
+          ./hosts/workstation
+          inputs.comin.nixosModules.comin
+        ];
       };
     };
 }

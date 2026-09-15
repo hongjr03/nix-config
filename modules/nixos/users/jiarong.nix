@@ -16,6 +16,9 @@
       "networkmanager"
       "wheel"
     ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILVkHsWEwpLLbG4msCgpYnqKZhOpmyRM9Q4rNCxpTIJC hongj@Jiarong-Desktop"
+    ];
   };
 
   security.sudo.extraRules = [
@@ -34,10 +37,18 @@
 
   # Agent API keys: decrypted at activation, consumed by the `pi` wrapper.
   sops.secrets = {
-    anthropic_api_key = { owner = "jiarong"; };
-    openai_api_key = { owner = "jiarong"; };
-    gemini_api_key = { owner = "jiarong"; };
-    openrouter_api_key = { owner = "jiarong"; };
+    anthropic_api_key = {
+      owner = "jiarong";
+    };
+    openai_api_key = {
+      owner = "jiarong";
+    };
+    gemini_api_key = {
+      owner = "jiarong";
+    };
+    openrouter_api_key = {
+      owner = "jiarong";
+    };
   };
   sops.templates."pi.env" = {
     path = "/run/secrets/pi.env";

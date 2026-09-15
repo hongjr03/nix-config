@@ -4,6 +4,8 @@
 { pkgs, ... }:
 
 {
+  imports = [ ./plasma.nix ];
+
   # Enable 白霜拼音 as the Rime default (rime-frost ships this as a suggestion file).
   home.file.".local/share/fcitx5/rime/default.custom.yaml".text = ''
     patch:

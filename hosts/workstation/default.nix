@@ -43,8 +43,6 @@
     "mihomo"
   ];
 
-  services.openssh.settings.PasswordAuthentication = true;
-
   home-manager.users.jiarong.imports = [ inputs.self.homeModules.desktop ];
 
   services.lab-printer-proxy = {
@@ -99,6 +97,18 @@
     xpra
     xterm
   ];
+
+  # Pull origin/main and switch. Public HTTPS, no deploy key.
+  services.comin = {
+    enable = true;
+    remotes = [
+      {
+        name = "origin";
+        url = "https://github.com/hongjr03/nix-config.git";
+        branches.main.name = "main";
+      }
+    ];
+  };
 
   # First NixOS version on this machine. Never change without reading
   # `man configuration.nix` / nixos-rebuild changelog.

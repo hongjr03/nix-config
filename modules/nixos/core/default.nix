@@ -13,6 +13,7 @@
     ./nix.nix
     ./locale.nix
     ./ssh.nix
+    ./tools.nix
     ./home-manager.nix
   ];
 }

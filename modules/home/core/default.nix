@@ -22,6 +22,20 @@
     };
   };
 
+  # 1Password GUI owns the agent (Settings → Developer → Use the SSH agent).
+  # Requires the desktop session; a missing socket makes ssh skip to files.
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    settings."*".IdentityAgent = "~/.1password/agent.sock";
+  };
+
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true;
+    nix-direnv.enable = true;
+  };
+
   # nvim-lspconfig does not auto-enable servers; upstream quickstart is vim.lsp.enable().
   programs.neovim = {
     enable = true;
