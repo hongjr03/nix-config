@@ -7,6 +7,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./lab-printer.nix
     inputs.home-manager.nixosModules.home-manager
     inputs.sops-nix.nixosModules.sops
   ];
@@ -254,9 +255,7 @@
   networking.firewall.allowedUDPPorts = [ 21116 ];
   networking.firewall.checkReversePath = "loose";
   networking.firewall.trustedInterfaces = [ "Meta" "mihomo" ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  # JetDirect 9100 allowlist lives in ./lab-printer.nix — do not publish it here.
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
