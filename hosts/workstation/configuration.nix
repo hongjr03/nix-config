@@ -273,6 +273,7 @@
     rustdesk-flutter
     sops
     age
+    gh
     ghostty
   ];
 
