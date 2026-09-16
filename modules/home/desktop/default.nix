@@ -16,7 +16,7 @@
 
   programs.ghostty = {
     enable = true;
-    enableBashIntegration = true;
+    enableFishIntegration = true;
     settings = {
       # OSC 52: Grok (and other TUIs) copy/paste the system clipboard
       # without a prompt. Klipper is told to hold the result in plasma.nix.

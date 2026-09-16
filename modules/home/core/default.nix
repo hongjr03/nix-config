@@ -1,32 +1,31 @@
 # jiarong's environment on any machine, graphical or not.
-# Hosts attach this via modules/nixos/users/jiarong.nix.
+# Hosts attach this via the user module (NixOS) or the darwin host.
 
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   home.stateVersion = "26.05";
 
-  # Interactive bash (including SSH login) reads ~/.bashrc via /etc/bashrc.
-  programs.bash.enable = true;
+  programs.fish.enable = true;
+  programs.starship.enable = true;
 
-  programs.fzf = {
-    enable = true;
-    enableBashIntegration = true;
-  };
+  programs.fzf.enable = true;
 
   # `--cmd cd` makes `cd` / `cdi` the zoxide aliases instead of `z` / `zi`.
   programs.zoxide = {
     enable = true;
-    enableBashIntegration = true;
     options = [ "--cmd cd" ];
   };
 
+  # Identity is per-host: NixOS and this Mac commit as different people.
   programs.git = {
     enable = true;
-    settings.user = {
-      name = "hongjr03";
-      email = "hongjr03@gmail.com";
-    };
+    lfs.enable = true;
+    settings.init.defaultBranch = "main";
   };
 
   # 1Password GUI owns the agent (Settings → Developer → Use the SSH agent).
@@ -34,12 +33,15 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    settings."*".IdentityAgent = "~/.1password/agent.sock";
+    settings."*".IdentityAgent =
+      if pkgs.stdenv.hostPlatform.isDarwin then
+        "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+      else
+        "~/.1password/agent.sock";
   };
 
   programs.direnv = {
     enable = true;
-    enableBashIntegration = true;
     nix-direnv.enable = true;
   };
 

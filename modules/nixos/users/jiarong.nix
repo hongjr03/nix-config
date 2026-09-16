@@ -5,13 +5,17 @@
 {
   config,
   inputs,
+  pkgs,
   ...
 }:
 
 {
+  programs.fish.enable = true;
+
   users.users.jiarong = {
     isNormalUser = true;
     description = "jiarong";
+    shell = pkgs.fish;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -33,7 +37,13 @@
     }
   ];
 
-  home-manager.users.jiarong.imports = [ inputs.self.homeModules.core ];
+  home-manager.users.jiarong = {
+    imports = [ inputs.self.homeModules.core ];
+    programs.git.settings.user = {
+      name = "hongjr03";
+      email = "hongjr03@gmail.com";
+    };
+  };
 
   # Agent API keys: decrypted at activation, consumed by the `pi` wrapper.
   sops.secrets = {
