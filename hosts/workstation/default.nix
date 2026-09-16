@@ -18,7 +18,12 @@
     inputs.self.nixosModules.lab-printer-proxy
   ];
 
-  networking.hostName = "workstation";
+  # Kernel/DNS hostname cannot contain '@' (RFC 1123 / NixOS type).
+  # Pretty name is what hostnamectl and desktop UIs show.
+  networking.hostName = "ics-host-529";
+  environment.etc."machine-info".text = ''
+    PRETTY_HOSTNAME=ics-host@529
+  '';
   networking.networkmanager.enable = true;
 
   boot.loader.systemd-boot.enable = true;
@@ -106,6 +111,8 @@
   # Pull origin/main and switch. Public HTTPS, no deploy key.
   services.comin = {
     enable = true;
+    # Flake output is still nixosConfigurations.workstation.
+    hostname = "workstation";
     remotes = [
       {
         name = "origin";
