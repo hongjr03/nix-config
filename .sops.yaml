@@ -1,12 +1,15 @@
+# &user is the admin age key for editing. Private key lives in
+# ~/.config/sops/age/keys.txt on machines that edit secrets (not git).
+# Host keys are ssh-to-age of each machine's SSH host key; sops-nix only.
 keys:
-  - &host age1kchg804zfhsftnhmvaqeh3w8wra3hl448ytyc0f98v8je3ua7s4q73ahj9
+  - &host_529 age1kchg804zfhsftnhmvaqeh3w8wra3hl448ytyc0f98v8je3ua7s4q73ahj9
   - &host_wsl age1u9q9jjnx44s7tvlr5mdyqqp4ua97w585wdungjq363uh8c7ldaxqqlypv4
-  - &userssh ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPp0EXEF02hTvLGQWYLMrXJVAKkBn6VcLlQ2yeEKZn25
+  - &user age1azajutl4uwatl92whdnvry0sgnf43r3hwhphdethsgxqafjvrghqug68eh
 
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|yml|json|env)$
     key_groups:
       - age:
-          - *host
+          - *host_529
           - *host_wsl
-          - *userssh
+          - *user
