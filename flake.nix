@@ -103,11 +103,11 @@
         ${darwinSystem}.default = mkDevShell darwinPkgs;
       };
 
-      nixosConfigurations.workstation = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."ics-host-529" = nixpkgs.lib.nixosSystem {
         system = linuxSystem;
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/workstation
+          ./hosts/ics-host-529
           inputs.comin.nixosModules.comin
         ];
       };

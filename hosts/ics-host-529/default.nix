@@ -111,8 +111,6 @@
   # Pull origin/main and switch. Public HTTPS, no deploy key.
   services.comin = {
     enable = true;
-    # Flake output is still nixosConfigurations.workstation.
-    hostname = "workstation";
     remotes = [
       {
         name = "origin";
