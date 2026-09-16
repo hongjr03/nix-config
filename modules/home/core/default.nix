@@ -38,9 +38,12 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
+    # Host aliases stay in ~/.ssh/config.local; this file only owns the agent.
+    includes = lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ "~/.ssh/config.local" ];
     settings."*".IdentityAgent =
       if pkgs.stdenv.hostPlatform.isDarwin then
-        "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+        # Path contains spaces; ssh_config needs the quotes in the file.
+        ''"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"''
       else
         "~/.1password/agent.sock";
   };
