@@ -1,6 +1,6 @@
 keys:
   - &host age1kchg804zfhsftnhmvaqeh3w8wra3hl448ytyc0f98v8je3ua7s4q73ahj9
-  - &host_wsl ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPmyWQuhimgPxhOW66ITQVfXZ00F3qdG99rSLIx2vnRO
+  - &host_wsl age1u9q9jjnx44s7tvlr5mdyqqp4ua97w585wdungjq363uh8c7ldaxqqlypv4
   - &userssh ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPp0EXEF02hTvLGQWYLMrXJVAKkBn6VcLlQ2yeEKZn25
 
 creation_rules:
