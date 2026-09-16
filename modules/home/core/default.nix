@@ -15,10 +15,15 @@
 
   programs.fzf.enable = true;
 
-  # `--cmd cd` makes `cd` / `cdi` the zoxide aliases instead of `z` / `zi`.
+  # `--cmd cd` makes `cd` / `cdi` the zoxide commands. Also keep the
+  # classic `z` / `zi` names so both work.
   programs.zoxide = {
     enable = true;
     options = [ "--cmd cd" ];
+  };
+  home.shellAliases = {
+    z = "cd";
+    zi = "cdi";
   };
 
   # Identity is per-host: NixOS and this Mac commit as different people.
