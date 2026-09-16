@@ -93,6 +93,7 @@
 
   home.file.".pi/agent/models.json".source = ./pi/models.json;
   home.file.".pi/agent/settings.json".text = builtins.toJSON {
-    defaultProvider = "openrouter";
+    defaultProvider = "aihub";
+    defaultModel = "gpt-5.6-luna";
   };
 }

@@ -45,30 +45,17 @@
     };
   };
 
-  # Agent API keys: decrypted at activation, consumed by the `pi` wrapper.
-  sops.secrets = {
-    anthropic_api_key = {
-      owner = "jiarong";
-    };
-    openai_api_key = {
-      owner = "jiarong";
-    };
-    gemini_api_key = {
-      owner = "jiarong";
-    };
-    openrouter_api_key = {
-      owner = "jiarong";
-    };
+  # Only aihub is wired into the `pi` wrapper. Other keys stay in
+  # secrets.yaml for later; they are not exported into the agent env.
+  sops.secrets.aihub_api_key = {
+    owner = "jiarong";
   };
   sops.templates."pi.env" = {
     path = "/run/secrets/pi.env";
     owner = "jiarong";
     mode = "0400";
     content = ''
-      ANTHROPIC_API_KEY=${config.sops.placeholder.anthropic_api_key}
-      OPENAI_API_KEY=${config.sops.placeholder.openai_api_key}
-      GEMINI_API_KEY=${config.sops.placeholder.gemini_api_key}
-      OPENROUTER_API_KEY=${config.sops.placeholder.openrouter_api_key}
+      AIHUB_API_KEY=${config.sops.placeholder.aihub_api_key}
     '';
   };
 }
