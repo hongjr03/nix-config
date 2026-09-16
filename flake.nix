@@ -88,7 +88,6 @@
       homeModules = {
         core = ./modules/home/core;
         desktop = ./modules/home/desktop;
-        zed = ./modules/home/zed.nix;
       };
 
       packages.${linuxSystem}.rime-frost = pkgs.callPackage ./pkgs/rime-frost.nix { };

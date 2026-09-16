@@ -32,10 +32,7 @@
   environment.shells = [ pkgs.fish ];
 
   home-manager.users.jiarong = {
-    imports = [
-      inputs.self.homeModules.core
-      inputs.self.homeModules.zed
-    ];
+    imports = [ inputs.self.homeModules.core ];
     programs.git = {
       settings.user = {
         name = "Hong Jiarong";
@@ -50,16 +47,25 @@
     };
   };
 
-  # GUI that should exist after cloning this flake onto a new Air.
-  # Already installed; brew bundle will adopt them. Everything else
-  # currently in `brew list` stays imperative.
+  # Daily GUI (and the fonts those apps use) after cloning this flake
+  # onto a new Air. brew bundle adopts what's already installed.
+  # Formulae and the rest of `brew list --cask` stay imperative.
   homebrew.casks = [
     "1password"
     "1password-cli"
     "ghostty"
+    "zed"
     "wechat"
     "telegram"
     "iina"
+    "maccy"
+    "mos"
+    "localsend"
+    "steam"
+    "wakatime"
+    "font-hack-nerd-font"
+    "font-iosevka"
+    "font-sarasa-gothic"
   ];
 
   # First nix-darwin version on this machine. Never change without
