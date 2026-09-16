@@ -11,13 +11,10 @@
   #
   # A host file is a bill of materials. It should read as "what this box is",
   # not as a dump of every option.
-
-  nixConfig = {
-    extra-substituters = [ "https://mirrors.cernet.edu.cn/nix-channels/store" ];
-    extra-trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    ];
-  };
+  #
+  # Do not put substituters in flake `nixConfig`. Restricted settings make
+  # `direnv use flake` prompt, and the prompt is unanswerable from a fish
+  # hook. The Cernet mirror lives on each machine via nix.settings.
 
   inputs = {
     # Track the 26.05 stable channel so `nix flake update nixpkgs` actually moves.
