@@ -4,6 +4,7 @@
 
 {
   inputs,
+  pkgs,
   ...
 }:
 
@@ -15,6 +16,24 @@
 
   wsl.enable = true;
   wsl.defaultUser = "jiarong";
+
+  # Windows Zed remote runs `wsl --exec cp` with no login PATH.
+  # NixOS-WSL /bin is otherwise just sh/mount. Without cp the Nix
+  # extension never uploads and nixd never starts.
+  wsl.extraBin = [
+    {
+      name = "cp";
+      src = "${pkgs.coreutils}/bin/cp";
+    }
+    {
+      name = "uname";
+      src = "${pkgs.coreutils}/bin/uname";
+    }
+    {
+      name = "mkdir";
+      src = "${pkgs.coreutils}/bin/mkdir";
+    }
+  ];
 
   networking.hostName = "desktop-host-wsl";
 
