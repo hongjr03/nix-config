@@ -47,6 +47,19 @@
     };
   };
 
+  # GUI that should exist after cloning this flake onto a new Air.
+  # Already installed; brew bundle will adopt them. Everything else
+  # currently in `brew list` stays imperative.
+  homebrew.casks = [
+    "1password"
+    "1password-cli"
+    "ghostty"
+    "zed"
+    "wechat"
+    "telegram"
+    "iina"
+  ];
+
   # First nix-darwin version on this machine. Never change without
   # reading `darwin-rebuild changelog`.
   system.stateVersion = 6;
