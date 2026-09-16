@@ -50,7 +50,12 @@
   };
 
   outputs =
-    inputs@{ self, nixpkgs, nixpkgs-darwin, ... }:
+    inputs@{
+      self,
+      nixpkgs,
+      nixpkgs-darwin,
+      ...
+    }:
     let
       linuxSystem = "x86_64-linux";
       darwinSystem = "aarch64-darwin";
