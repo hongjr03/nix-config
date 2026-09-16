@@ -48,6 +48,8 @@
       url = "github:nix-community/NixOS-WSL/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Only for packages 26.05 has not backported (currently pi-coding-agent).
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
@@ -73,7 +75,7 @@
         };
     in
     {
-      overlays.default = import ./overlays;
+      overlays.default = import ./overlays { inherit inputs; };
 
       nixosModules = {
         core = ./modules/nixos/core;

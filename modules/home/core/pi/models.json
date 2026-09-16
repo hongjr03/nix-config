@@ -3,7 +3,7 @@
     "aihub": {
       "baseUrl": "https://aihub.pascal-lab.net/v1",
       "api": "openai-responses",
-      "apiKey": "AIHUB_API_KEY",
+      "apiKey": "$AIHUB_API_KEY",
       "authHeader": true,
       "compat": {
         "supportsDeveloperRole": false,
