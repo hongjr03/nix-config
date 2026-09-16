@@ -11,6 +11,7 @@
     inputs.home-manager.darwinModules.home-manager
     ./nix.nix
     ./home-manager.nix
+    ./tools.nix
   ];
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
