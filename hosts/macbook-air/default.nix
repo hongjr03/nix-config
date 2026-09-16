@@ -31,6 +31,22 @@
   programs.fish.useBabelfish = true;
   environment.shells = [ pkgs.fish ];
 
+  home-manager.users.jiarong = {
+    imports = [ inputs.self.homeModules.core ];
+    programs.git = {
+      settings.user = {
+        name = "Hong Jiarong";
+        email = "me@jrhim.com";
+      };
+      signing = {
+        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMlyHMlFbP25zB9A1L8KpgM8Pugma1tZoRGQ2Xn+bRsP";
+        format = "ssh";
+        signByDefault = true;
+        signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+      };
+    };
+  };
+
   # First nix-darwin version on this machine. Never change without
   # reading `darwin-rebuild changelog`.
   system.stateVersion = 6;
