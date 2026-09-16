@@ -11,6 +11,11 @@
   home.stateVersion = "26.05";
 
   programs.fish.enable = true;
+  # fish sets generateCaches = mkDefault true for `man` completion. Darwin
+  # uses the system man(1) (package = null at stateVersion 26.05), so that
+  # option does nothing and home-manager warns.
+  programs.man.generateCaches = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin false;
+
   programs.starship.enable = true;
 
   programs.fzf.enable = true;
