@@ -1,10 +1,11 @@
 {
-  description = "NixOS + Home Manager configuration";
+  description = "NixOS + nix-darwin + Home Manager configuration";
 
   # Layers, bottom to top:
   #   pkgs/            derivations
   #   overlays/        make them visible as pkgs.*
-  #   modules/nixos    system profiles and parameterized services
+  #   modules/nixos    NixOS system profiles and parameterized services
+  #   modules/darwin   nix-darwin system profiles
   #   modules/home     user environments (core = any host, desktop = a seat)
   #   hosts/<name>     one machine: hardware + which modules it imports
   #
@@ -22,6 +23,13 @@
     # Track the 26.05 stable channel so `nix flake update nixpkgs` actually moves.
     # Keep this in lockstep with home-manager/release-26.05 below.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    # Darwin packages get their own 26.05 backport branch; nix-darwin-26.05
+    # is documented to follow this, not nixos-26.05.
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-26.05-darwin";
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
+    };
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,10 +50,21 @@
   };
 
   outputs =
-    inputs@{ self, nixpkgs, ... }:
+    inputs@{ self, nixpkgs, nixpkgs-darwin, ... }:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      linuxSystem = "x86_64-linux";
+      darwinSystem = "aarch64-darwin";
+      pkgs = nixpkgs.legacyPackages.${linuxSystem};
+      darwinPkgs = nixpkgs-darwin.legacyPackages.${darwinSystem};
+      mkDevShell =
+        p:
+        p.mkShell {
+          packages = [
+            p.nixfmt-tree
+            p.sops
+            p.nh
+          ];
+        };
     in
     {
       overlays.default = import ./overlays;
@@ -57,31 +76,40 @@
         lab-printer-proxy = ./modules/nixos/lab-printer-proxy.nix;
       };
 
+      darwinModules = {
+        core = ./modules/darwin/core;
+      };
+
       homeModules = {
         core = ./modules/home/core;
         desktop = ./modules/home/desktop;
       };
 
-      packages.${system}.rime-frost = pkgs.callPackage ./pkgs/rime-frost.nix { };
+      packages.${linuxSystem}.rime-frost = pkgs.callPackage ./pkgs/rime-frost.nix { };
 
       # Official Nix formatter. `nix fmt` reformats the tree; `nix fmt -- --ci` checks.
-      formatter.${system} = pkgs.nixfmt-tree;
+      formatter = {
+        ${linuxSystem} = pkgs.nixfmt-tree;
+        ${darwinSystem} = darwinPkgs.nixfmt-tree;
+      };
 
-      devShells.${system}.default = pkgs.mkShell {
-        packages = [
-          pkgs.nixfmt-tree
-          pkgs.sops
-          pkgs.nh
-        ];
+      devShells = {
+        ${linuxSystem}.default = mkDevShell pkgs;
+        ${darwinSystem}.default = mkDevShell darwinPkgs;
       };
 
       nixosConfigurations.workstation = nixpkgs.lib.nixosSystem {
-        inherit system;
+        system = linuxSystem;
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/workstation
           inputs.comin.nixosModules.comin
         ];
+      };
+
+      darwinConfigurations.macbook-air = inputs.nix-darwin.lib.darwinSystem {
+        specialArgs = { inherit inputs; };
+        modules = [ ./hosts/macbook-air ];
       };
     };
 }
