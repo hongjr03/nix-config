@@ -32,7 +32,10 @@
   environment.shells = [ pkgs.fish ];
 
   home-manager.users.jiarong = {
-    imports = [ inputs.self.homeModules.core ];
+    imports = [
+      inputs.self.homeModules.core
+      inputs.self.homeModules.zed
+    ];
     programs.git = {
       settings.user = {
         name = "Hong Jiarong";
@@ -54,7 +57,6 @@
     "1password"
     "1password-cli"
     "ghostty"
-    "zed"
     "wechat"
     "telegram"
     "iina"
