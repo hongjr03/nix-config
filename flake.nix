@@ -47,6 +47,10 @@
       url = "github:nlewo/comin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -109,6 +113,15 @@
         modules = [
           ./hosts/ics-host-529
           inputs.comin.nixosModules.comin
+        ];
+      };
+
+      nixosConfigurations."desktop-host-wsl" = nixpkgs.lib.nixosSystem {
+        system = linuxSystem;
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/desktop-host-wsl
+          inputs.nixos-wsl.nixosModules.default
         ];
       };
 
