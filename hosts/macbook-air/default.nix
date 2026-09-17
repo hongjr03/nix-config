@@ -50,9 +50,11 @@
     };
   };
 
+  # HMCL is packaged by Nixpkgs with its macOS launcher and matching Java.
+  environment.systemPackages = [ pkgs.hmcl ];
+
   # Everything Homebrew should keep on this Air. `cleanup = uninstall`
   # removes formulae, casks, and taps that are not listed here.
-  homebrew.taps = [ "voxelum/xmcl" ];
   homebrew.casks = [
     "1password"
     "1password-cli"
@@ -87,7 +89,6 @@
     "cc-switch"
     "paseo"
     "starnet++"
-    "xmcl"
   ];
   homebrew.brews = [
     "wget"
