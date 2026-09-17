@@ -94,6 +94,6 @@
   home.file.".pi/agent/models.json".source = ./pi/models.json;
   home.file.".pi/agent/settings.json".text = builtins.toJSON {
     defaultProvider = "aihub";
-    defaultModel = "gpt-6-astra";
+    defaultModel = "gpt-5.6-terra";
   };
 }
