@@ -9,7 +9,10 @@
 }:
 
 {
-  imports = [ inputs.self.darwinModules.core ];
+  imports = [
+    inputs.self.darwinModules.core
+    ../../modules/sops/pi-env.nix
+  ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 

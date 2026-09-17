@@ -11,6 +11,7 @@
     inputs.home-manager.darwinModules.home-manager
     ./nix.nix
     ./home-manager.nix
+    ./sops.nix
     ./tools.nix
     ./homebrew.nix
   ];

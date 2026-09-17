@@ -3,13 +3,14 @@
 # Graphical home (modules/home/desktop) is imported by the host that has a seat.
 
 {
-  config,
   inputs,
   pkgs,
   ...
 }:
 
 {
+  imports = [ ../../sops/pi-env.nix ];
+
   programs.fish.enable = true;
 
   users.users.jiarong = {
@@ -43,19 +44,5 @@
       name = "hongjr03";
       email = "hongjr03@gmail.com";
     };
-  };
-
-  # Only aihub is wired into the `pi` wrapper. Other keys stay in
-  # secrets.yaml for later; they are not exported into the agent env.
-  sops.secrets.aihub_api_key = {
-    owner = "jiarong";
-  };
-  sops.templates."pi.env" = {
-    path = "/run/secrets/pi.env";
-    owner = "jiarong";
-    mode = "0400";
-    content = ''
-      AIHUB_API_KEY=${config.sops.placeholder.aihub_api_key}
-    '';
   };
 }
