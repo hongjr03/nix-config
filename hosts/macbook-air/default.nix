@@ -47,9 +47,9 @@
     };
   };
 
-  # Daily GUI (and the fonts those apps use) after cloning this flake
-  # onto a new Air. brew bundle adopts what's already installed.
-  # Formulae and the rest of `brew list --cask` stay imperative.
+  # Everything Homebrew should keep on this Air. `cleanup = uninstall`
+  # removes formulae, casks, and taps that are not listed here.
+  homebrew.taps = [ "voxelum/xmcl" ];
   homebrew.casks = [
     "1password"
     "1password-cli"
@@ -72,6 +72,37 @@
     "font-hack-nerd-font"
     "font-iosevka"
     "font-sarasa-gothic"
+    "codex"
+    "anki"
+    "discord"
+    "inkscape"
+    "libreoffice"
+    "vscodium"
+    "wireshark-app"
+    "daisydisk"
+    "balenaetcher"
+    "cc-switch"
+    "paseo"
+    "starnet++"
+    "xmcl"
+  ];
+  homebrew.brews = [
+    "wget"
+    "yazi"
+    "tree"
+    "curl"
+    "python@3.14"
+    "libheif"
+    "poppler"
+    "potrace"
+    "argon2"
+    "macchina"
+    "mole"
+    "msedit"
+    "serie"
+    "tokei"
+    "exercism"
+    "telegram-downloader"
   ];
 
   # First nix-darwin version on this machine. Never change without
