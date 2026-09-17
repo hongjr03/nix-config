@@ -63,6 +63,7 @@
       linuxSystem = "x86_64-linux";
       darwinSystem = "aarch64-darwin";
       pkgs = nixpkgs.legacyPackages.${linuxSystem};
+      unstablePkgs = inputs.nixpkgs-unstable.legacyPackages.${linuxSystem};
       darwinPkgs = nixpkgs-darwin.legacyPackages.${darwinSystem};
       mkDevShell =
         p:
@@ -93,7 +94,16 @@
         desktop = ./modules/home/desktop;
       };
 
-      packages.${linuxSystem}.rime-frost = pkgs.callPackage ./pkgs/rime-frost.nix { };
+      packages.${linuxSystem} = {
+        rime-frost = pkgs.callPackage ./pkgs/rime-frost.nix { };
+
+        # Debian system profiles for pascal-cloud-host. These retain the
+        # flake lock instead of resolving an unpinned nixpkgs at deployment.
+        pascal-cloud-host-mihomo = unstablePkgs.mihomo;
+        pascal-cloud-host-sops = pkgs.sops;
+        pascal-cloud-host-zashboard = unstablePkgs.zashboard;
+        pascal-cloud-host-home-manager = inputs.home-manager.packages.${linuxSystem}.home-manager;
+      };
 
       # Official Nix formatter. `nix fmt` reformats the tree; `nix fmt -- --ci` checks.
       formatter = {
@@ -104,6 +114,20 @@
       devShells = {
         ${linuxSystem}.default = mkDevShell pkgs;
         ${darwinSystem}.default = mkDevShell darwinPkgs;
+      };
+
+      # This is a Home Manager target for a Debian host, not a NixOS
+      # configuration. Root-owned Debian state is deployed by the host script.
+      homeConfigurations."jiarong-pascal-cloud-host" = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = linuxSystem;
+          overlays = [ self.overlays.default ];
+          config.allowUnfree = true;
+        };
+        modules = [
+          self.homeModules.core
+          ./hosts/pascal-cloud-host/home.nix
+        ];
       };
 
       nixosConfigurations."ics-host-529" = nixpkgs.lib.nixosSystem {
