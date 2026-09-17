@@ -10,6 +10,11 @@
 {
   home.stateVersion = "26.05";
 
+  home.sessionVariables = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+    # Keep the dedicated age editing key in 1Password, never on disk or in Git.
+    SOPS_AGE_KEY_CMD = "op read 'op://Personal/nix-config sops age key/keys.txt'";
+  };
+
   programs.fish.enable = true;
   # fish sets generateCaches = mkDefault true for `man` completion. Darwin
   # uses the system man(1) (package = null at stateVersion 26.05), so that
