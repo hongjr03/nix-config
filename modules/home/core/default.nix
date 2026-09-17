@@ -76,6 +76,7 @@
     pkgs.gh
     pkgs.fd
     pkgs.ripgrep
+    pkgs.tokei
     (pkgs.writeShellApplication {
       name = "pi";
       text = ''
