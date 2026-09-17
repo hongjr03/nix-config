@@ -76,7 +76,6 @@
     pkgs.gh
     pkgs.fd
     pkgs.ripgrep
-    pkgs.grok-build
     (pkgs.writeShellApplication {
       name = "pi";
       text = ''
