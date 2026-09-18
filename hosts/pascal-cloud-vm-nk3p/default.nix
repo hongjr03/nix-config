@@ -27,6 +27,10 @@
   networking.useDHCP = false;
   networking.interfaces.ens18.useDHCP = true;
 
+  # The portal reads this host's IP through qemu-guest-agent; without it the
+  # console shows no IPs (proxmox-image.nix used to set this for the image).
+  services.qemuGuest.enable = true;
+
   # BIOS (Grub) VM on PVE; no EFI partition exists.
   boot.loader.grub = {
     enable = true;
