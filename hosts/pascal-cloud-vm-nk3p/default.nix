@@ -118,6 +118,14 @@
           - 223.5.5.5
           - 119.29.29.29
 
+      tun:
+        enable: true
+        stack: mixed
+        auto-route: true
+        auto-detect-interface: true
+        dns-hijack:
+          - any:53
+
       proxy-providers:
         sub:
           type: http
@@ -143,6 +151,7 @@
   };
   services.mihomo = {
     enable = true;
+    tunMode = true;
     configFile = config.sops.templates."mihomo-config.yaml".path;
     webui = pkgs.zashboard;
   };
