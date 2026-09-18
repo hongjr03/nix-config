@@ -115,6 +115,15 @@
         ];
       };
 
+      nixosConfigurations."pascal-cloud-vm-nk3p" = nixpkgs.lib.nixosSystem {
+        system = linuxSystem;
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/pascal-cloud-vm-nk3p
+          inputs.comin.nixosModules.comin
+        ];
+      };
+
       nixosConfigurations."desktop-host-wsl" = nixpkgs.lib.nixosSystem {
         system = linuxSystem;
         specialArgs = { inherit inputs; };

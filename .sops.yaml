@@ -5,6 +5,7 @@ keys:
   - &host_529 age1kchg804zfhsftnhmvaqeh3w8wra3hl448ytyc0f98v8je3ua7s4q73ahj9
   - &host_wsl age1u9q9jjnx44s7tvlr5mdyqqp4ua97w585wdungjq363uh8c7ldaxqqlypv4
   - &host_macbook_air age1368s2mufqqdh8ja65yd64a99phaa4vspklt4vu2eg7shgspeu4fsmxzjdd
+  - &host_pascal_cloud_vm age109jxm4rduh46qrkphzvu0kfsx27qk5kug29e5z24wtvuuzwxzc3sc2p8ae
   - &user age1azajutl4uwatl92whdnvry0sgnf43r3hwhphdethsgxqafjvrghqug68eh
 
 creation_rules:
@@ -14,4 +15,5 @@ creation_rules:
           - *host_529
           - *host_wsl
           - *host_macbook_air
+          - *host_pascal_cloud_vm
           - *user
