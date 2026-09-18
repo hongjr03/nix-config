@@ -20,6 +20,13 @@
 
   networking.hostName = "pascal-cloud-vm-nk3p";
 
+  # The cloud image got DHCP from virtualisation/proxmox-image.nix (and its
+  # eth0 naming); this host does not import it, so state DHCP explicitly or
+  # the machine comes up with no address and falls off the network on the
+  # first switch.
+  networking.useDHCP = false;
+  networking.interfaces.ens18.useDHCP = true;
+
   # BIOS (Grub) VM on PVE; no EFI partition exists.
   boot.loader.grub = {
     enable = true;
@@ -80,13 +87,10 @@
     '';
   };
 
-  # goproxy injection: Pascal Cloud hosts cannot reach proxy.golang.org, which
-  # breaks the go-modules fetch of sops-install-secrets. The overlay exposes a
-  # patched copy of the package (sops-nix' module otherwise builds its own
-  # unpatched copy via callPackage). GOPROXY is inherited by go-modules
-  # (pkgs/build-support/go/module.nix). goproxy.cn is reachable from Pascal
-  # Cloud; harmless elsewhere.
-  sops.package = pkgs.sops-install-secrets;
+  # comin rebuilds fetch Go modules in the build it triggers. Its service is
+  # a non-interactive client for the go-modules FOD (impureEnvVars), so it
+  # must source GOPROXY itself.
+  systemd.services.comin.serviceConfig.Environment = "GOPROXY=https://goproxy.cn,direct";
 
   # Pull origin/main and switch. Public HTTPS, no deploy key.
   services.comin = {
