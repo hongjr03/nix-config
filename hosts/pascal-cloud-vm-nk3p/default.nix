@@ -80,6 +80,14 @@
     '';
   };
 
+  # goproxy injection: Pascal Cloud hosts cannot reach proxy.golang.org, which
+  # breaks the go-modules fetch of sops-install-secrets. The overlay exposes a
+  # patched copy of the package (sops-nix' module otherwise builds its own
+  # unpatched copy via callPackage). GOPROXY is inherited by go-modules
+  # (pkgs/build-support/go/module.nix). goproxy.cn is reachable from Pascal
+  # Cloud; harmless elsewhere.
+  sops.package = pkgs.sops-install-secrets;
+
   # Pull origin/main and switch. Public HTTPS, no deploy key.
   services.comin = {
     enable = true;
