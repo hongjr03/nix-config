@@ -126,6 +126,11 @@
     };
   };
 
+  # Native Linux Steam. The client already ships Proton for Windows-only
+  # titles; we do not pin extra compat tools. 32-bit GL and controller
+  # udev rules come with the module.
+  programs.steam.enable = true;
+
   # Dedicated NixOS modules install setuid/setgid wrappers and PolKit rules.
   programs._1password.enable = true;
   programs._1password-gui = {
