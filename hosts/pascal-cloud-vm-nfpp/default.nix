@@ -122,14 +122,6 @@
           - 223.5.5.5
           - 119.29.29.29
 
-      tun:
-        enable: true
-        stack: mixed
-        auto-route: true
-        auto-detect-interface: true
-        dns-hijack:
-          - any:53
-
       proxy-providers:
         sub:
           type: http
@@ -154,12 +146,17 @@
         - DOMAIN-SUFFIX,nloli.xyz,DIRECT
         - DOMAIN-SUFFIX,pascal-lab.net,DIRECT
         - IP-CIDR,114.212.80.0/21,DIRECT
+        # Campus network reaches GitHub over SSH directly, and most proxy
+        # nodes refuse port 22. Keep interactive git@github.com working.
+        - DST-PORT,22,DIRECT
         - MATCH,PROXY
     '';
   };
   services.mihomo = {
     enable = true;
-    tunMode = true;
+    # Headless server: no TUN. Explicit proxy env vars (below) drive nix,
+    # git over HTTPS and comin; SSH and the campus portal stay direct.
+    tunMode = false;
     configFile = config.sops.templates."mihomo-config.yaml".path;
     webui = pkgs.zashboard;
   };
@@ -175,6 +172,14 @@
   };
   systemd.services.comin.serviceConfig.Environment =
     "HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890";
+
+  # Interactive shells get the same proxy. SSH is not proxied, so
+  # git@github.com keeps working over the campus network's direct route.
+  home-manager.users.jiarong.home.sessionVariables = {
+    http_proxy = "http://127.0.0.1:7890";
+    https_proxy = "http://127.0.0.1:7890";
+    no_proxy = "127.0.0.1,localhost,pascal-lab.net,.nju.edu.cn,114.212.0.0/16";
+  };
 
   # Log in to NJU campus network after the portal has installed the script.
   # Credentials are tracked in sops (secrets/njunet.yaml) and decrypted to
