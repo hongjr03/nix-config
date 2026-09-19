@@ -97,8 +97,9 @@
   ];
 
   home.file.".pi/agent/models.json".source = ./pi/models.json;
+  home.file.".pi/agent/extensions/aihub-models.js".source = ./pi/aihub-models.js;
   home.file.".pi/agent/settings.json".text = builtins.toJSON {
-    defaultProvider = "aihub";
+    defaultProvider = "aihub-codex";
     defaultModel = "gpt-5.6-terra";
   };
 }
