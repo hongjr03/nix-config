@@ -16,6 +16,7 @@
     ./hardware-configuration.nix
     inputs.self.nixosModules.core
     inputs.self.nixosModules.users-jiarong
+    inputs.self.nixosModules.mihomo-proxy
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [
@@ -95,90 +96,16 @@
     '';
   };
 
-  # Mihomo local proxy: campus network here is unstable for nix/GitHub.
-  # Nix builds get routed through it via proxy env vars below; nodes are
-  # picked in the dashboard. Secrets come from sops (same files as ics-host).
-  # The static policy is reviewed here; mihomo refreshes its provider in its
-  # state directory. The URL and controller credential never enter the store.
-  sops.secrets = {
-    mihomo_subscription_url.sopsFile = ../../secrets/mihomo.yaml;
-    mihomo_controller_secret.sopsFile = ../../secrets/mihomo.yaml;
-  };
-  sops.templates."mihomo-config.yaml" = {
-    restartUnits = [ "mihomo.service" ];
-    content = ''
-      mixed-port: 7890
-      allow-lan: false
-      mode: rule
-      log-level: info
-      ipv6: true
-      external-controller: 127.0.0.1:9090
-      secret: "${config.sops.placeholder.mihomo_controller_secret}"
-
-      dns:
-        enable: true
-        enhanced-mode: fake-ip
-        nameserver:
-          - 223.5.5.5
-          - 119.29.29.29
-
-      proxy-providers:
-        sub:
-          type: http
-          url: "${config.sops.placeholder.mihomo_subscription_url}"
-          interval: 86400
-          path: ./sub.yaml
-          health-check:
-            enable: true
-            url: https://www.gstatic.com/generate_204
-            interval: 300
-
-      proxy-groups:
-        - name: PROXY
-          type: select
-          use:
-            - sub
-
-      rules:
-        # Campus portal and the subscription bootstrap must not depend on the
-        # proxy: login has to succeed before any proxy node exists.
-        - DOMAIN-SUFFIX,nju.edu.cn,DIRECT
-        - DOMAIN-SUFFIX,nloli.xyz,DIRECT
-        - DOMAIN-SUFFIX,pascal-lab.net,DIRECT
-        - IP-CIDR,114.212.80.0/21,DIRECT
-        # Campus network reaches GitHub over SSH directly, and most proxy
-        # nodes refuse port 22. Keep interactive git@github.com working.
-        - DST-PORT,22,DIRECT
-        - MATCH,PROXY
-    '';
-  };
-  services.mihomo = {
+  # Campus proxy. Headless host: no TUN, explicit proxy env drives nix and
+  # comin; SSH and the campus portal stay direct. See modules/nixos/mihomo-proxy.nix.
+  services.mihomo-proxy = {
     enable = true;
-    # Headless server: no TUN. Explicit proxy env vars (below) drive nix,
-    # git over HTTPS and comin; SSH and the campus portal stay direct.
     tunMode = false;
-    configFile = config.sops.templates."mihomo-config.yaml".path;
-    webui = pkgs.zashboard;
-  };
-
-  # Nix builds (go-modules FODs, tarball fetches) honor proxy env vars
-  # (impureEnvVars); route them through the local mihomo mixed-port.
-  # NB: impureEnvVars are passed from the *client* process env, so any out-of-
-  # tree nix invocation (e.g. comin) needs the same env: comin carries it too.
-  systemd.services.nix-daemon.environment = {
-    HTTP_PROXY = "http://127.0.0.1:7890";
-    HTTPS_PROXY = "http://127.0.0.1:7890";
-    NO_PROXY = "127.0.0.1,localhost,pascal-lab.net,.nju.edu.cn,114.212.0.0/16";
-  };
-  systemd.services.comin.serviceConfig.Environment =
-    "HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890";
-
-  # Interactive shells get the same proxy. SSH is not proxied, so
-  # git@github.com keeps working over the campus network's direct route.
-  home-manager.users.jiarong.home.sessionVariables = {
-    http_proxy = "http://127.0.0.1:7890";
-    https_proxy = "http://127.0.0.1:7890";
-    no_proxy = "127.0.0.1,localhost,pascal-lab.net,.nju.edu.cn,114.212.0.0/16";
+    setProxyEnv = true;
+    extraRules = [
+      # Subscription bootstrap must not depend on the proxy.
+      "DOMAIN-SUFFIX,nloli.xyz,DIRECT"
+    ];
   };
 
   # Log in to NJU campus network after the portal has installed the script.

@@ -16,6 +16,7 @@
     inputs.self.nixosModules.users-jiarong
     inputs.self.nixosModules.desktop
     inputs.self.nixosModules.lab-printer-proxy
+    inputs.self.nixosModules.mihomo-proxy
   ];
 
   # Kernel/DNS hostname cannot contain '@' (RFC 1123 / NixOS type).
@@ -89,67 +90,13 @@
     ];
   };
 
-  # The static policy is reviewed here; Mihomo refreshes its provider in its
-  # state directory. The URL and controller credential never enter the store.
-  sops.secrets = {
-    mihomo_subscription_url.sopsFile = ../../secrets/mihomo.yaml;
-    mihomo_controller_secret.sopsFile = ../../secrets/mihomo.yaml;
-  };
-  sops.templates."mihomo-config.yaml" = {
-    restartUnits = [ "mihomo.service" ];
-    content = ''
-      mixed-port: 7890
-      allow-lan: true
-      bind-address: "*"
-      mode: rule
-      log-level: info
-      ipv6: true
-      external-controller: 0.0.0.0:9090
-      secret: "${config.sops.placeholder.mihomo_controller_secret}"
-
-      dns:
-        enable: true
-        enhanced-mode: fake-ip
-        nameserver:
-          - 223.5.5.5
-          - 119.29.29.29
-
-      tun:
-        enable: true
-        stack: mixed
-        auto-route: true
-        auto-detect-interface: true
-        dns-hijack:
-          - any:53
-
-      proxy-providers:
-        sub:
-          type: http
-          url: "${config.sops.placeholder.mihomo_subscription_url}"
-          interval: 86400
-          path: ./sub.yaml
-          health-check:
-            enable: true
-            url: https://www.gstatic.com/generate_204
-            interval: 300
-
-      proxy-groups:
-        - name: PROXY
-          type: select
-          use:
-            - sub
-
-      rules:
-        - DOMAIN-SUFFIX,pascal-lab.net,DIRECT
-        - IP-CIDR,114.212.80.0/21,DIRECT
-        - MATCH,PROXY
-    '';
-  };
-  services.mihomo = {
+  # Desktop proxy: TUN captures browser traffic; allow-lan shares the proxy
+  # with the LAN. Policy lives in modules/nixos/mihomo-proxy.nix.
+  services.mihomo-proxy = {
     enable = true;
-    configFile = config.sops.templates."mihomo-config.yaml".path;
-    webui = pkgs.zashboard;
     tunMode = true;
+    allowLan = true;
+    externalController = "0.0.0.0:9090";
   };
 
   environment.systemPackages = with pkgs; [
