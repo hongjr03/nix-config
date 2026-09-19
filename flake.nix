@@ -115,11 +115,11 @@
         ];
       };
 
-      nixosConfigurations."pascal-cloud-vm-nk3p" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."pascal-cloud-vm-nfpp" = nixpkgs.lib.nixosSystem {
         system = linuxSystem;
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/pascal-cloud-vm-nk3p
+          ./hosts/pascal-cloud-vm-nfpp
           inputs.comin.nixosModules.comin
         ];
       };

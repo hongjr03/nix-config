@@ -18,7 +18,7 @@
     inputs.self.nixosModules.users-jiarong
   ];
 
-  networking.hostName = "pascal-cloud-vm-nk3p";
+  networking.hostName = "pascal-cloud-vm-nfpp";
 
   # The cloud image got DHCP from virtualisation/proxmox-image.nix (and its
   # eth0 naming); this host does not import it, so state DHCP explicitly or
