@@ -18,6 +18,10 @@
     inputs.self.nixosModules.users-jiarong
   ];
 
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILVkHsWEwpLLbG4msCgpYnqKZhOpmyRM9Q4rNCxpTIJC hongj@Jiarong-Desktop"
+  ];
+
   networking.hostName = "pascal-cloud-vm-nfpp";
 
   # The cloud image got DHCP from virtualisation/proxmox-image.nix (and its
@@ -144,6 +148,10 @@
             - sub
 
       rules:
+        # Campus portal and the subscription bootstrap must not depend on the
+        # proxy: login has to succeed before any proxy node exists.
+        - DOMAIN-SUFFIX,nju.edu.cn,DIRECT
+        - DOMAIN-SUFFIX,nloli.xyz,DIRECT
         - DOMAIN-SUFFIX,pascal-lab.net,DIRECT
         - IP-CIDR,114.212.80.0/21,DIRECT
         - MATCH,PROXY
@@ -167,6 +175,58 @@
   };
   systemd.services.comin.serviceConfig.Environment =
     "HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890";
+
+  # Log in to NJU campus network after the portal has installed the script.
+  # Credentials are tracked in sops (secrets/njunet.yaml) and decrypted to
+  # /run/secrets at activation; they never enter the Nix store.
+  sops.secrets = {
+    nju_id.sopsFile = ../../secrets/njunet.yaml;
+    nju_password.sopsFile = ../../secrets/njunet.yaml;
+  };
+  sops.templates."njunet.env" = {
+    path = "/run/secrets/njunet.env";
+    owner = "root";
+    mode = "0400";
+    content = ''
+      NJU_ID=${config.sops.placeholder.nju_id}
+      NJU_PASSWORD=${config.sops.placeholder.nju_password}
+    '';
+  };
+
+  systemd.services.nju-campus-login = {
+    description = "NJU campus network login";
+    wantedBy = [ "multi-user.target" ];
+    after = [
+      "network-online.target"
+      "pve-portal-guest-init.service"
+    ];
+    wants = [ "network-online.target" ];
+    unitConfig.ConditionPathExists = "/server-scripts/njunet.sh";
+    path = [
+      pkgs.bash
+      pkgs.curl
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      EnvironmentFile = config.sops.templates."njunet.env".path;
+      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = 30;
+    };
+    # Feed credentials through stdin so they never appear in the process list.
+    script = ''
+      set -eu
+      printf '%s\n%s\n' "$NJU_ID" "$NJU_PASSWORD" \
+        | ${pkgs.bash}/bin/bash /server-scripts/njunet.sh
+    '';
+  };
+
+  # Mihomo needs the campus session up first: before login only the portal is
+  # reachable, and TUN would take over DNS and break the login itself.
+  systemd.services.mihomo = {
+    after = [ "nju-campus-login.service" ];
+    requires = [ "nju-campus-login.service" ];
+  };
 
   # Pull origin/main and switch. Public HTTPS, no deploy key.
   services.comin = {
