@@ -41,6 +41,10 @@
     enable = true;
     lfs.enable = true;
     settings.init.defaultBranch = "main";
+    # ~/.config/git/config is a read-only nix-store symlink, so `gh auth login`
+    # cannot add its credential helper itself. Declare it here instead and
+    # answer "No" to gh's "Authenticate Git with your GitHub credentials?".
+    settings.credential."https://github.com".helper = "!gh auth git-credential";
   };
 
   # 1Password GUI owns the agent (Settings → Developer → Use the SSH agent).
