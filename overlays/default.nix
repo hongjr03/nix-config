@@ -7,4 +7,9 @@ final: prev: {
   # 26.05 still has 0.75.4. Unstable already ships 0.85.1.
   pi-coding-agent =
     inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.pi-coding-agent;
+  # 26.05 has no paseo at all; unstable's build needs the node-pty addon it
+  # forgets to ship (see pkgs/paseo.nix).
+  paseo = final.callPackage ../pkgs/paseo.nix {
+    paseo = inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.paseo;
+  };
 }

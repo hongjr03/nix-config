@@ -17,6 +17,7 @@
     inputs.self.nixosModules.core
     inputs.self.nixosModules.users-jiarong
     inputs.self.nixosModules.mihomo-proxy
+    inputs.self.nixosModules.paseo
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [
@@ -106,6 +107,14 @@
       # Subscription bootstrap must not depend on the proxy.
       "DOMAIN-SUFFIX,nloli.xyz,DIRECT"
     ];
+  };
+
+  # Paseo daemon: run coding agents here and pair the MacBook / phone to it.
+  # Runs as jiarong so the agents inherit this user's tools and credentials;
+  # remote clients reach it through Paseo's relay, so no firewall hole.
+  services.paseo = {
+    enable = true;
+    user = "jiarong";
   };
 
   # Log in to NJU campus network after the portal has installed the script.
