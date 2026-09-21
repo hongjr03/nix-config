@@ -106,17 +106,14 @@ export default function (pi) {
 
   pi.registerProvider("aihub-deepseek", {
     baseUrl,
-    api: "openai-completions",
+    api: "openai-responses",
     apiKey: deepseekApiKey,
     authHeader: true,
-    // DeepSeek's native chat API: thinking is toggled with `thinking: { type }`,
-    // it uses `max_tokens`, and replayed assistant turns need reasoning_content.
+    // AIHub exposes DeepSeek through the OpenAI Responses-compatible endpoint.
+    // Keep the developer-role override for this proxy; Responses handles output
+    // token limits and reasoning payloads itself.
     compat: {
-      thinkingFormat: "deepseek",
       supportsDeveloperRole: false,
-      supportsStore: false,
-      maxTokensField: "max_tokens",
-      requiresReasoningContentOnAssistantMessages: true,
     },
     async refreshModels({ signal }) {
       const models = await fetchModels(process.env.AIHUB_DEEPSEEK_API_KEY, signal);
