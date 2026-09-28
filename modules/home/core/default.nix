@@ -79,6 +79,7 @@
 
   home.packages = [
     pkgs.nixd
+    pkgs.wget
     pkgs.fastfetch
     pkgs.sops
     pkgs.age
