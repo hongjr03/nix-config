@@ -66,7 +66,6 @@
     "qq"
     "wechat"
     "telegram"
-    "clash-verge-rev"
     "betterdisplay"
     "iina"
     "maccy"
