@@ -132,7 +132,12 @@ in
         dns:
           enable: true
           enhanced-mode: fake-ip
+          # Plain UDP:53 is hijacked on campus, and AliDNS answers the
+          # subscription host with a redirect-cnzz node whose cert does not
+          # match. doh.pub returns the real Cloudflare addresses.
           nameserver:
+            - https://doh.pub/dns-query
+          default-nameserver:
             - 223.5.5.5
             - 119.29.29.29
 
