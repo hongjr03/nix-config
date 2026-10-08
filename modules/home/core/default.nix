@@ -86,6 +86,7 @@
     pkgs.fd
     pkgs.ripgrep
     pkgs.tokei
+    pkgs.just
     (pkgs.writeShellApplication {
       name = "pi";
       text = ''
