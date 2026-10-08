@@ -166,7 +166,7 @@ in
     systemd.services.nix-daemon.environment = lib.mkIf cfg.setProxyEnv {
       HTTP_PROXY = "http://127.0.0.1:${toString cfg.mixedPort}";
       HTTPS_PROXY = "http://127.0.0.1:${toString cfg.mixedPort}";
-      NO_PROXY = "127.0.0.1,localhost,pascal-lab.net,.nju.edu.cn,114.212.0.0/16";
+      NO_PROXY = "127.0.0.1,localhost,pascal-lab.net,mirrors.cernet.edu.cn,cache.nixos.org,.nju.edu.cn,114.212.0.0/16";
     };
 
     systemd.services.comin.serviceConfig.Environment =
@@ -181,7 +181,7 @@ in
     environment.variables = lib.mkIf cfg.setProxyEnv {
       http_proxy = "http://127.0.0.1:${toString cfg.mixedPort}";
       https_proxy = "http://127.0.0.1:${toString cfg.mixedPort}";
-      no_proxy = "127.0.0.1,localhost,pascal-lab.net,.nju.edu.cn,114.212.0.0/16";
+      no_proxy = "127.0.0.1,localhost,pascal-lab.net,mirrors.cernet.edu.cn,cache.nixos.org,.nju.edu.cn,114.212.0.0/16";
     };
   };
 }
