@@ -1,6 +1,10 @@
 # Developer QoL that belongs on every machine we rebuild from this flake.
 
+{ pkgs, ... }:
+
 {
+  environment.systemPackages = [ pkgs.python3 ];
+
   programs.nh = {
     enable = true;
     flake = "/home/jiarong/nix-config";
