@@ -90,6 +90,11 @@
     "starnet++"
   ];
   homebrew.brews = [
+    # Interpreter for the npm globals that live in Homebrew's prefix
+    # (lark-cli, auggie, copilot, ...). `cleanup = "uninstall"` removes any
+    # formula missing here, and npm globals are not formulae -- without this
+    # line they stay behind but lose their interpreter.
+    "node"
     "wget"
     "yazi"
     "tree"
