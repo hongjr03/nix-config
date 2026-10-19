@@ -17,6 +17,7 @@
     inputs.self.nixosModules.desktop
     inputs.self.nixosModules.lab-printer-proxy
     inputs.self.nixosModules.mihomo-proxy
+    inputs.self.nixosModules.pascal-checkin
   ];
 
   # Kernel/DNS hostname cannot contain '@' (RFC 1123 / NixOS type).
@@ -88,6 +89,12 @@
     systemCronJobs = [
       "*/5 * * * * jiarong /etc/pascal-ddns.sh"
     ];
+  };
+
+  # Daily LLM-platform check-in (token in sops, log in /var/lib/pascal-checkin).
+  services.pascal-checkin = {
+    enable = true;
+    user = "jiarong";
   };
 
   # Desktop proxy: TUN captures browser traffic; allow-lan shares the proxy

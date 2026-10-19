@@ -12,6 +12,7 @@
   imports = [
     inputs.self.nixosModules.core
     inputs.self.nixosModules.users-jiarong
+    inputs.self.nixosModules.pascal-checkin
   ];
 
   wsl.enable = true;
@@ -36,6 +37,13 @@
   ];
 
   networking.hostName = "desktop-host-wsl";
+
+  # Daily LLM-platform check-in (token in sops, log in /var/lib/pascal-checkin).
+  # Idempotent: a second machine running it the same day is a no-op.
+  services.pascal-checkin = {
+    enable = true;
+    user = "jiarong";
+  };
 
   # Flake attr is desktop-host-wsl. nh reads this first.
   environment.variables.NH_OS_FLAKE = "/home/jiarong/nix-config#desktop-host-wsl";

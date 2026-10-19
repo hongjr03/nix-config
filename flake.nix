@@ -83,6 +83,7 @@
         users-jiarong = ./modules/nixos/users/jiarong.nix;
         lab-printer-proxy = ./modules/nixos/lab-printer-proxy.nix;
         mihomo-proxy = ./modules/nixos/mihomo-proxy.nix;
+        pascal-checkin = ./modules/nixos/pascal-checkin.nix;
       };
 
       darwinModules = {
