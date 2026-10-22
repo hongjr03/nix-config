@@ -36,6 +36,16 @@
 
   home-manager.users.jiarong = {
     imports = [ inputs.self.homeModules.core ];
+
+    # Container runtime for the occasional throwaway image (e.g. a one-off
+    # service). Colima drives a Lima VM and exposes a Docker socket; on
+    # Apple Silicon prefer `colima start --vm-type vz` (native, no qemu).
+    # Only the client belongs on Darwin -- there is no in-kernel daemon.
+    home.packages = [
+      pkgs.colima
+      pkgs.docker-client
+    ];
+
     programs.git = {
       settings.user = {
         name = "Hong Jiarong";
