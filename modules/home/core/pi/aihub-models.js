@@ -98,6 +98,21 @@ const fallbackSpec = { contextWindow: 128000, maxTokens: 16384, reasoning: false
 // off, and Gemini 3 Pro only exposes low/high.
 const geminiModelSpecs = [
   {
+    // gemini-4-argon exposes low/medium/high (as in pi's opencode catalog).
+    match: /^gemini-4/,
+    contextWindow: 1048576,
+    maxTokens: 65536,
+    thinkingLevelMap: {
+      off: null,
+      minimal: null,
+      low: "low",
+      medium: "medium",
+      high: "high",
+      xhigh: null,
+      max: null,
+    },
+  },
+  {
     match: /^gemini-3(\.\d+)?-pro/,
     contextWindow: 1048576,
     maxTokens: 65536,
