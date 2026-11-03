@@ -1,5 +1,5 @@
-const baseUrl = "https://aihub.pascal-lab.net/v1";
-const geminiBaseUrl = "https://aihub.pascal-lab.net/v1beta";
+const baseUrl = "https://aaihub.pascal-lab.net/v1";
+const geminiBaseUrl = "https://aaihub.pascal-lab.net/v1beta";
 const codexApiKey = "$AIHUB_CODEX_API_KEY";
 const deepseekApiKey = "$AIHUB_DEEPSEEK_API_KEY";
 const geminiApiKey = "$AIHUB_GEMINI_API_KEY";
