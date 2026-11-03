@@ -1,8 +1,10 @@
 # Daily check-in for the PASCAL LLM gateway (a new-api instance).
 #
 # The access token lives in sops, so it never enters the nix store. The
-# script next to this file is vendored unmodified from upstream (stdlib
-# only), so it can be diffed/replaced wholesale.
+# script next to this file is vendored from upstream (stdlib only) with one
+# local patch: a check-in refused because the balance is already capped exits
+# 0 instead of 4, so the unit does not retry forever (see the "余额已达上限"
+# case in the script). Keep the rest verbatim so it can be replaced wholesale.
 #
 # A systemd timer is used instead of cron: the run is a one-shot, its
 # output belongs in the journal, and Persistent= catches up a missed day

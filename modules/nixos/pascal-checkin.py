@@ -14,7 +14,7 @@ Access Token 的读取顺序:
     3. 脚本同目录下的 token.txt（默认）
 
 退出码:
-    0  签到成功 / 今日已签到
+    0  签到成功 / 今日已签到 / 余额已达上限
     2  Token 无效、已过期或已撤销（重新生成 token）
     3  Token 缺少权限（需要授权 wallet:write）
     4  网络或服务器异常
@@ -198,6 +198,12 @@ def main(argv=None):
     lowered = message.lower()
     if "already checked in" in lowered or "已签到" in message:
         log("今日已签到，无需重复。", log_path, echo)
+        return EXIT_OK
+    # Hitting the balance cap is a normal terminal state: the platform refuses
+    # the check-in and no retry can change it, so treat it as success instead of
+    # crash-looping the unit every RestartSec.
+    if "余额已达上限" in message or ("balance" in lowered and "limit" in lowered):
+        log("签到未执行：余额已达上限，无需重复签到。", log_path, echo)
         return EXIT_OK
 
     log("签到未完成：%s" % (message or body[:200]), log_path, echo)
