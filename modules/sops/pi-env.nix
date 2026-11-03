@@ -8,6 +8,7 @@
   sops.secrets = {
     aihub_codex_api_key.owner = "jiarong";
     aihub_deepseek_api_key.owner = "jiarong";
+    aihub_gemini_api_key.owner = "jiarong";
     opencode_api_key.owner = "jiarong";
   };
   sops.templates."pi.env" = {
@@ -17,6 +18,7 @@
     content = ''
       AIHUB_CODEX_API_KEY=${config.sops.placeholder.aihub_codex_api_key}
       AIHUB_DEEPSEEK_API_KEY=${config.sops.placeholder.aihub_deepseek_api_key}
+      AIHUB_GEMINI_API_KEY=${config.sops.placeholder.aihub_gemini_api_key}
       OPENCODE_API_KEY=${config.sops.placeholder.opencode_api_key}
     '';
   };
