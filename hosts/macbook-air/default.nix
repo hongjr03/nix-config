@@ -58,6 +58,26 @@
         signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
       };
     };
+
+    # opencode rotates its Go lineup constantly and pi's own catalog sources lag
+    # it by weeks, so pull the live list once a day. pi reloads
+    # models-store.json every time /model opens, so edits show up without a
+    # restart. Reads a public endpoint -- no API key needed.
+    launchd.agents.sync-opencode-go-models = {
+      enable = true;
+      config = {
+        ProgramArguments = [ "${pkgs.sync-opencode-go-models}/bin/sync-opencode-go-models" ];
+        StartCalendarInterval = [
+          {
+            Hour = 9;
+            Minute = 15;
+          }
+        ];
+        RunAtLoad = true;
+        StandardOutPath = "/Users/jiarong/Library/Logs/sync-opencode-go.log";
+        StandardErrorPath = "/Users/jiarong/Library/Logs/sync-opencode-go.log";
+      };
+    };
   };
 
   # HMCL is packaged by Nixpkgs with its macOS launcher and matching Java.

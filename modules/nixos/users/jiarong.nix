@@ -40,6 +40,29 @@
     }
   ];
 
+  # opencode rotates its Go model lineup constantly and pi's own catalog
+  # sources lag it by weeks, so pull the live list once a day as this user
+  # (the script rewrites ~/.pi/agent/models-store.json). Reads a public
+  # endpoint, so no secret is involved. Skipped until the machine has run pi.
+  systemd.services.sync-opencode-go-models = {
+    description = "Refresh pi's opencode-go model catalog";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "jiarong";
+      ExecStart = "${pkgs.sync-opencode-go-models}/bin/sync-opencode-go-models";
+    };
+  };
+
+  systemd.timers.sync-opencode-go-models = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*-*-* 09:15:00";
+      # Catch up on the next boot if the box was off at 09:15.
+      Persistent = true;
+      RandomizedDelaySec = "5m";
+    };
+  };
+
   home-manager.users.jiarong = {
     imports = [ inputs.self.homeModules.core ];
     programs.git.settings.user = {

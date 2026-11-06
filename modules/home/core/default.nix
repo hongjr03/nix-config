@@ -88,6 +88,9 @@
     pkgs.ripgrep
     pkgs.tokei
     pkgs.just
+    # Keeps pi's opencode-go model list level with opencode's live /v1/models.
+    # The launchd timer that runs it lives in the darwin host.
+    pkgs.sync-opencode-go-models
     (pkgs.writeShellApplication {
       name = "pi";
       text = ''

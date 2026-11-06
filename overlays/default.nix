@@ -4,6 +4,7 @@
 { inputs }:
 final: prev: {
   rime-frost = final.callPackage ../pkgs/rime-frost.nix { };
+  sync-opencode-go-models = final.callPackage ../pkgs/sync-opencode-go-models.nix { };
   # 26.05 still has 0.75.4. Unstable already ships 0.85.1.
   pi-coding-agent =
     inputs.nixpkgs-unstable.legacyPackages.${prev.stdenv.hostPlatform.system}.pi-coding-agent;
